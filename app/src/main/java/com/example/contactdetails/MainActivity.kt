@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,7 +49,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ContactDetails(contact: Contact, modifier: Modifier = Modifier) {
-    val initials = "${contact.name.firstOrNull()}${contact.surname?.firstOrNull() ?: ""}"
+    val initials = remember(contact.name, contact.surname) {
+        "${contact.name.firstOrNull()}${contact.surname?.firstOrNull() ?: ""}"
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -66,7 +69,8 @@ fun ContactDetails(contact: Contact, modifier: Modifier = Modifier) {
         NameRow(name = contact.name, surname = contact.surname)
         FamilyNameRow(familyName = contact.familyName, isFavorite = contact.isFavorite)
 
-        InfoRow(label = stringResource(R.string.phone), value = contact.phone.ifEmpty { "---" })
+        val phone = remember(contact.phone) { contact.phone.ifEmpty { "---" } }
+        InfoRow(label = stringResource(R.string.phone), value = phone)
         InfoRow(label = stringResource(R.string.address), value = contact.address)
 
         contact.email?.let {
